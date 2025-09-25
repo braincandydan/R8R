@@ -163,68 +163,192 @@ class _RatingScreenState extends State<RatingScreen> {
                       const SizedBox(height: 24),
 
                       // Wing ratings section
-                      Text(
-                        'Wing Ratings',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.orange.withOpacity(0.2)),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      _buildRatingSection(
-                        context,
-                        title: 'Crispiness',
-                        subtitle: 'How crispy are the wings?',
-                        icon: FontAwesomeIcons.cookie,
-                        value: _wingCrispiness,
-                        onChanged: (value) => setState(() => _wingCrispiness = value),
-                      ),
-                      
-                      _buildRatingSection(
-                        context,
-                        title: 'Flavor',
-                        subtitle: 'How tasty are the wings?',
-                        icon: FontAwesomeIcons.utensils,
-                        value: _wingFlavor,
-                        onChanged: (value) => setState(() => _wingFlavor = value),
-                      ),
-                      
-                      _buildRatingSection(
-                        context,
-                        title: 'Size',
-                        subtitle: 'How big are the wings?',
-                        icon: FontAwesomeIcons.weightScale,
-                        value: _wingSize,
-                        onChanged: (value) => setState(() => _wingSize = value),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.drumstickBite,
+                                  color: Colors.orange[700],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Wing Ratings',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            
+                            _buildRatingSection(
+                              context,
+                              title: 'Crispiness',
+                              subtitle: 'How crispy are the wings?',
+                              icon: FontAwesomeIcons.cookie,
+                              value: _wingCrispiness,
+                              onChanged: (value) => setState(() => _wingCrispiness = value),
+                              category: 'wing',
+                            ),
+                            
+                            _buildRatingSection(
+                              context,
+                              title: 'Flavor',
+                              subtitle: 'How tasty and well-seasoned are the wings?',
+                              icon: FontAwesomeIcons.utensils,
+                              value: _wingFlavor,
+                              onChanged: (value) => setState(() => _wingFlavor = value),
+                              category: 'wing',
+                            ),
+                            
+                            _buildRatingSection(
+                              context,
+                              title: 'Size',
+                              subtitle: 'How big and meaty are the wings?',
+                              icon: FontAwesomeIcons.weightScale,
+                              value: _wingSize,
+                              onChanged: (value) => setState(() => _wingSize = value),
+                              category: 'wing',
+                            ),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
                       // Beer ratings section
-                      Text(
-                        'Beer Ratings',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.amber.withOpacity(0.2)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.beerMugEmpty,
+                                  color: Colors.amber[700],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Beer Ratings',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.amber[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            
+                            _buildRatingSection(
+                              context,
+                              title: 'Selection',
+                              subtitle: 'How good is the beer selection?',
+                              icon: FontAwesomeIcons.beerMugEmpty,
+                              value: _beerSelection,
+                              onChanged: (value) => setState(() => _beerSelection = value),
+                              category: 'beer',
+                            ),
+                            
+                            _buildRatingSection(
+                              context,
+                              title: 'Pairing',
+                              subtitle: 'How well do the beers pair with wings?',
+                              icon: FontAwesomeIcons.handshake,
+                              value: _beerPairing,
+                              onChanged: (value) => setState(() => _beerPairing = value),
+                              category: 'beer',
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      
-                      _buildRatingSection(
-                        context,
-                        title: 'Selection',
-                        subtitle: 'How good is the beer selection?',
-                        icon: FontAwesomeIcons.beerMugEmpty,
-                        value: _beerSelection,
-                        onChanged: (value) => setState(() => _beerSelection = value),
-                      ),
-                      
-                      _buildRatingSection(
-                        context,
-                        title: 'Pairing',
-                        subtitle: 'How well do the beers pair with wings?',
-                        icon: FontAwesomeIcons.handshake,
-                        value: _beerPairing,
-                        onChanged: (value) => setState(() => _beerPairing = value),
+
+                      const SizedBox(height: 24),
+
+                      // Overall rating summary
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.star,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Overall Rating',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _buildOverallRatingItem(
+                                  context,
+                                  icon: FontAwesomeIcons.drumstickBite,
+                                  label: 'Wings',
+                                  rating: (_wingCrispiness + _wingFlavor + _wingSize) / 3,
+                                  color: Colors.orange,
+                                ),
+                                _buildOverallRatingItem(
+                                  context,
+                                  icon: FontAwesomeIcons.beerMugEmpty,
+                                  label: 'Beer',
+                                  rating: (_beerSelection + _beerPairing) / 2,
+                                  color: Colors.amber,
+                                ),
+                                _buildOverallRatingItem(
+                                  context,
+                                  icon: FontAwesomeIcons.star,
+                                  label: 'Total',
+                                  rating: (_wingCrispiness + _wingFlavor + _wingSize + _beerSelection + _beerPairing) / 5,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  isTotal: true,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 24),
@@ -288,79 +412,169 @@ class _RatingScreenState extends State<RatingScreen> {
     required IconData icon,
     required double value,
     required ValueChanged<double> onChanged,
+    required String category,
   }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                FaIcon(
+    final categoryColor = category == 'wing' ? Colors.orange : Colors.amber;
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: categoryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: FaIcon(
                   icon,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 20,
+                  color: categoryColor[700],
+                  size: 18,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  '${value.round()}/5',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: RatingBar.builder(
-                initialRating: value,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: false,
-                itemCount: 5,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => const Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                onRatingUpdate: onChanged,
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: categoryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '${value.round()}/5',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: categoryColor[800],
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: RatingBar.builder(
+              initialRating: value,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemPadding: const EdgeInsets.symmetric(horizontal: 6.0),
+              itemBuilder: (context, index) {
+                if (index < value.round()) {
+                  return Icon(
+                    Icons.star,
+                    color: categoryColor[600],
+                  );
+                } else {
+                  return Icon(
+                    Icons.star_border,
+                    color: Colors.grey[400],
+                  );
+                }
+              },
+              onRatingUpdate: onChanged,
             ),
-            const SizedBox(height: 8),
-            Center(
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Text(
                 _getRatingDescription(title, value.round()),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildOverallRatingItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required double rating,
+    required Color color,
+    bool isTotal = false,
+  }) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: isTotal 
+                ? Border.all(color: color.withOpacity(0.3), width: 2)
+                : null,
+          ),
+          child: FaIcon(
+            icon,
+            color: color[700],
+            size: isTotal ? 24 : 20,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+            color: isTotal ? color[800] : Colors.grey[700],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          rating.toStringAsFixed(1),
+          style: TextStyle(
+            fontSize: isTotal ? 18 : 16,
+            fontWeight: FontWeight.bold,
+            color: color[800],
+          ),
+        ),
+      ],
     );
   }
 

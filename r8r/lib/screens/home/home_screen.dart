@@ -16,6 +16,7 @@ class HomeScreen extends StatelessWidget {
         title: const Text('R8R'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

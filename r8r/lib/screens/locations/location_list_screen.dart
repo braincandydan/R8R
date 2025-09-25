@@ -48,9 +48,10 @@ class _LocationListScreenState extends State<LocationListScreen> {
                   setState(() {});
                 },
               )
-            : const Text('Wing Locations'),
+            : const Text('Find Locations'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
