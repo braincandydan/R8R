@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/location_service.dart';
+import '../../widgets/quick_rate_dialog.dart';
 
 class RateSelectionScreen extends StatelessWidget {
   const RateSelectionScreen({super.key});
@@ -241,14 +242,37 @@ class RateSelectionScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              FaIcon(
-                FontAwesomeIcons.arrowRight,
-                color: Colors.grey[400],
-                size: 16,
+              Column(
+                children: [
+                  IconButton(
+                    onPressed: () => _showQuickRateDialog(context, location),
+                    icon: const FaIcon(FontAwesomeIcons.bolt),
+                    tooltip: 'Quick Rate',
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.orange.withOpacity(0.1),
+                      foregroundColor: Colors.orange,
+                    ),
+                  ),
+                  FaIcon(
+                    FontAwesomeIcons.arrowRight,
+                    color: Colors.grey[400],
+                    size: 16,
+                  ),
+                ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showQuickRateDialog(BuildContext context, location) {
+    showDialog(
+      context: context,
+      builder: (context) => QuickRateDialog(
+        locationId: location.id,
+        locationName: location.name,
       ),
     );
   }

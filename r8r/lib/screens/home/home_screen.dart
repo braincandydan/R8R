@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/auth_service.dart';
 import '../../services/rating_service.dart';
+import '../../services/location_service.dart';
+import '../../widgets/quick_rate_dialog.dart';
 import '../locations/location_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -129,6 +131,73 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 32),
+
+                    // Quick rate recent locations
+                    Text(
+                      'Quick Rate Recent Locations',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    Consumer<LocationService>(
+                      builder: (context, locationService, _) {
+                        final recentLocations = locationService.locations.take(3).toList();
+                        
+                        if (recentLocations.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        
+                        return Column(
+                          children: recentLocations.map((location) {
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 12.0),
+                              child: ListTile(
+                                leading: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.drumstickBite,
+                                    color: Colors.orange,
+                                    size: 16,
+                                  ),
+                                ),
+                                title: Text(
+                                  location.name,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  location.address,
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                trailing: ElevatedButton.icon(
+                                  onPressed: () => _showQuickRateDialog(context, location),
+                                  icon: const FaIcon(FontAwesomeIcons.bolt, size: 12),
+                                  label: const Text('Quick Rate'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+
                     const SizedBox(height: 32),
 
                     // Recent reviews section
@@ -327,6 +396,16 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showQuickRateDialog(BuildContext context, location) {
+    showDialog(
+      context: context,
+      builder: (context) => QuickRateDialog(
+        locationId: location.id,
+        locationName: location.name,
       ),
     );
   }

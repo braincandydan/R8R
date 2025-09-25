@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/location_service.dart';
 import '../../models/location_model.dart';
+import '../../widgets/quick_rate_dialog.dart';
 
 class LocationListScreen extends StatefulWidget {
   const LocationListScreen({super.key});
@@ -259,19 +260,43 @@ class _LocationListScreenState extends State<LocationListScreen> {
                     ),
                   ],
                   const Spacer(),
-                  TextButton.icon(
-                    onPressed: () => context.go('/rate/${location.id}'),
-                    icon: const FaIcon(FontAwesomeIcons.star, size: 14),
-                    label: const Text('Rate'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => _showQuickRateDialog(context, location),
+                        icon: const FaIcon(FontAwesomeIcons.bolt, size: 14),
+                        tooltip: 'Quick Rate',
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.orange.withOpacity(0.1),
+                          foregroundColor: Colors.orange,
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () => context.go('/rate/${location.id}'),
+                        icon: const FaIcon(FontAwesomeIcons.star, size: 14),
+                        label: const Text('Rate'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showQuickRateDialog(BuildContext context, LocationModel location) {
+    showDialog(
+      context: context,
+      builder: (context) => QuickRateDialog(
+        locationId: location.id,
+        locationName: location.name,
       ),
     );
   }
