@@ -444,7 +444,7 @@ class _RatingScreenState extends State<RatingScreen> {
                 ),
                 child: FaIcon(
                   icon,
-                  color: categoryColor[700],
+                  color: categoryColor,
                   size: 18,
                 ),
               ),
@@ -478,7 +478,7 @@ class _RatingScreenState extends State<RatingScreen> {
                   '${value.round()}/5',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: categoryColor[800],
+                    color: categoryColor,
                     fontSize: 16,
                   ),
                 ),
@@ -498,7 +498,7 @@ class _RatingScreenState extends State<RatingScreen> {
                 if (index < value.round()) {
                   return Icon(
                     Icons.star,
-                    color: categoryColor[600],
+                    color: categoryColor,
                   );
                 } else {
                   return Icon(
@@ -553,7 +553,7 @@ class _RatingScreenState extends State<RatingScreen> {
           ),
           child: FaIcon(
             icon,
-            color: color[700],
+            color: color,
             size: isTotal ? 24 : 20,
           ),
         ),
@@ -562,7 +562,7 @@ class _RatingScreenState extends State<RatingScreen> {
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-            color: isTotal ? color[800] : Colors.grey[700],
+            color: isTotal ? color : Colors.grey[700],
           ),
         ),
         const SizedBox(height: 4),
@@ -571,7 +571,7 @@ class _RatingScreenState extends State<RatingScreen> {
           style: TextStyle(
             fontSize: isTotal ? 18 : 16,
             fontWeight: FontWeight.bold,
-            color: color[800],
+            color: color,
           ),
         ),
       ],
