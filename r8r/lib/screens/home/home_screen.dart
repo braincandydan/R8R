@@ -43,27 +43,79 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Welcome section
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Welcome back, ${authService.currentUserName ?? 'Wing Lover'}!',
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Ready to discover some amazing wings and beer?',
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                            ),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFFF6B35),
+                            const Color(0xFFFF8A50),
                           ],
                         ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF6B35).withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: FaIcon(
+                                  FontAwesomeIcons.drumstickBite,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Good ${_getGreeting()}!',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      authService.currentUserName ?? 'Wing Lover',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Ready to discover some amazing wings and beer?',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -134,11 +186,27 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 32),
 
                     // Quick rate recent locations
-                    Text(
-                      'Quick Rate Recent Locations',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'Quick Rate Recent',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () => context.go('/rate'),
+                          child: Text(
+                            'View All',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     
@@ -147,53 +215,154 @@ class HomeScreen extends StatelessWidget {
                         final recentLocations = locationService.locations.take(3).toList();
                         
                         if (recentLocations.isEmpty) {
-                          return const SizedBox.shrink();
+                          return Container(
+                            padding: const EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.grey[200]!),
+                            ),
+                            child: Column(
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.drumstickBite,
+                                  color: Colors.grey[400],
+                                  size: 32,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No locations to rate yet',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Discover some wing spots first!',
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                         }
                         
-                        return Column(
-                          children: recentLocations.map((location) {
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12.0),
-                              child: ListTile(
-                                leading: Container(
-                                  padding: const EdgeInsets.all(8),
+                        return SizedBox(
+                          height: 140,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: recentLocations.length,
+                            itemBuilder: (context, index) {
+                              final location = recentLocations[index];
+                              return Container(
+                                width: 220,
+                                margin: const EdgeInsets.only(right: 16),
+                                child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.orange.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.drumstickBite,
-                                    color: Colors.orange,
-                                    size: 16,
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () => _showQuickRateDialog(context, location),
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: FaIcon(
+                                                    FontAwesomeIcons.drumstickBite,
+                                                    color: const Color(0xFFFF6B35),
+                                                    size: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    location.name,
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              location.address,
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontSize: 12,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const Spacer(),
+                                            Row(
+                                              children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons.star,
+                                                  color: Colors.amber[600],
+                                                  size: 12,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  location.averageRating.toStringAsFixed(1),
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                const Spacer(),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(12),
+                                                  ),
+                                                  child: Text(
+                                                    'Rate',
+                                                    style: TextStyle(
+                                                      color: const Color(0xFFFF6B35),
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                title: Text(
-                                  location.name,
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  location.address,
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                trailing: ElevatedButton.icon(
-                                  onPressed: () => _showQuickRateDialog(context, location),
-                                  icon: const FaIcon(FontAwesomeIcons.bolt, size: 12),
-                                  label: const Text('Quick Rate'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.orange,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
@@ -268,47 +437,70 @@ class HomeScreen extends StatelessWidget {
     required VoidCallback onTap,
     required Color color,
   }) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: FaIcon(
+                    icon,
+                    color: color,
+                    size: 28,
+                  ),
                 ),
-                child: FaIcon(
-                  icon,
-                  color: color,
-                  size: 24,
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 6),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Morning';
+    if (hour < 17) return 'Afternoon';
+    return 'Evening';
   }
 
   Widget _buildReviewCard(BuildContext context, review) {

@@ -7,6 +7,7 @@ class RatingService extends ChangeNotifier {
   bool _isLoading = false;
 
   List<ReviewModel> get reviews => _reviews;
+  List<ReviewModel> get recentReviews => getRecentReviews();
   bool get isLoading => _isLoading;
 
   RatingService() {
@@ -19,6 +20,7 @@ class RatingService extends ChangeNotifier {
       ReviewModel(
         id: '1',
         locationId: '1',
+        locationName: 'Buffalo Wild Wings',
         userId: 'user1',
         userName: 'WingLover42',
         rating: RatingModel(
@@ -30,10 +32,12 @@ class RatingService extends ChangeNotifier {
         ),
         comment: 'Great wings! The buffalo sauce was perfect. Beer selection was decent.',
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)),
       ),
       ReviewModel(
         id: '2',
         locationId: '1',
+        locationName: 'Buffalo Wild Wings',
         userId: 'user2',
         userName: 'BeerMaster',
         rating: RatingModel(
@@ -45,10 +49,12 @@ class RatingService extends ChangeNotifier {
         ),
         comment: 'Amazing beer selection! Wings were good but could be crispier.',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
       ),
       ReviewModel(
         id: '3',
         locationId: '2',
+        locationName: 'Wingstop',
         userId: 'user3',
         userName: 'SpiceQueen',
         rating: RatingModel(
@@ -60,6 +66,7 @@ class RatingService extends ChangeNotifier {
         ),
         comment: 'Perfect crispy wings with amazing flavor! The heat level was just right.',
         timestamp: DateTime.now().subtract(const Duration(days: 3)),
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
       ),
     ];
     notifyListeners();
@@ -71,6 +78,7 @@ class RatingService extends ChangeNotifier {
     required String userName,
     required RatingModel rating,
     String? comment,
+    String? locationName,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -80,11 +88,13 @@ class RatingService extends ChangeNotifier {
       final newReview = ReviewModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         locationId: locationId,
+        locationName: locationName,
         userId: userId,
         userName: userName,
         rating: rating,
         comment: comment,
         timestamp: DateTime.now(),
+        createdAt: DateTime.now(),
       );
 
       _reviews.insert(0, newReview); // Add to beginning of list

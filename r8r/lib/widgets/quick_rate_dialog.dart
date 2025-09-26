@@ -21,8 +21,8 @@ class QuickRateDialog extends StatefulWidget {
 }
 
 class _QuickRateDialogState extends State<QuickRateDialog> {
-  double _wingRating = 3.0;
-  double _beerRating = 3.0;
+  double _wingRating = 0.0; // -10 to 10 scale
+  double _beerRating = 0.0; // -10 to 10 scale
   bool _isSubmitting = false;
 
   @override
@@ -83,7 +83,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
             const SizedBox(height: 24),
 
             // Wing Rating
-            _buildRatingSection(
+            _buildSliderRatingSection(
               context,
               title: 'Wings',
               subtitle: 'How were the wings?',
@@ -96,7 +96,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
             const SizedBox(height: 16),
 
             // Beer Rating
-            _buildRatingSection(
+            _buildSliderRatingSection(
               context,
               title: 'Beer',
               subtitle: 'How was the beer?',
@@ -180,7 +180,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
     );
   }
 
-  Widget _buildRatingSection(
+  Widget _buildSliderRatingSection(
     BuildContext context, {
     required String title,
     required String subtitle,
@@ -239,7 +239,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${value.round()}/5',
+                  '${value.round()}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: color,
@@ -249,32 +249,46 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Center(
-            child: RatingBar.builder(
-              initialRating: value,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: false,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, index) {
-                if (index < value.round()) {
-                  return Icon(
-                    Icons.star,
-                    color: color,
-                    size: 20,
-                  );
-                } else {
-                  return Icon(
-                    Icons.star_border,
-                    color: Colors.grey[400],
-                    size: 20,
-                  );
-                }
-              },
-              onRatingUpdate: onChanged,
+          const SizedBox(height: 16),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: color,
+              inactiveTrackColor: color.withOpacity(0.2),
+              thumbColor: color,
+              overlayColor: color.withOpacity(0.2),
+              trackHeight: 4.0,
             ),
+            child: Slider(
+              value: value,
+              min: -10,
+              max: 10,
+              divisions: 20,
+              onChanged: onChanged,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Poor (-10)',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[600],
+                ),
+              ),
+              Text(
+                _getRatingDescription(value.round()),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Excellent (+10)',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -321,13 +335,19 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
 
     setState(() => _isSubmitting = true);
 
+    // Convert -10 to 10 scale to 1-5 scale for RatingModel
+    int convertToFiveScale(double value) {
+      // Convert -10 to 10 range to 1 to 5 range
+      return ((value + 10) / 20 * 4 + 1).round().clamp(1, 5);
+    }
+
     // Create rating with the selected values
     final rating = RatingModel(
-      wingCrispiness: _wingRating.round(),
-      wingFlavor: _wingRating.round(),
-      wingSize: _wingRating.round(),
-      beerSelection: _beerRating.round(),
-      beerPairing: _beerRating.round(),
+      wingCrispiness: convertToFiveScale(_wingRating),
+      wingFlavor: convertToFiveScale(_wingRating),
+      wingSize: convertToFiveScale(_wingRating),
+      beerSelection: convertToFiveScale(_beerRating),
+      beerPairing: convertToFiveScale(_beerRating),
     );
 
     await ratingService.submitRating(
@@ -335,7 +355,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
       userId: authService.currentUserId!,
       userName: authService.currentUserName ?? 'Anonymous',
       rating: rating,
-      comment: 'Quick rating: Wings ${_wingRating.round()}/5, Beer ${_beerRating.round()}/5',
+      comment: 'Quick rating: Wings ${_wingRating.round()}/10, Beer ${_beerRating.round()}/10',
     );
 
     setState(() => _isSubmitting = false);
@@ -344,10 +364,23 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Quick rating submitted! Wings: ${_wingRating.round()}/5, Beer: ${_beerRating.round()}/5'),
+          content: Text('Quick rating submitted! Wings: ${_wingRating.round()}/10, Beer: ${_beerRating.round()}/10'),
           backgroundColor: Colors.green,
         ),
       );
     }
+  }
+
+  String _getRatingDescription(int rating) {
+    if (rating <= -8) return 'Terrible';
+    if (rating <= -6) return 'Very Poor';
+    if (rating <= -4) return 'Poor';
+    if (rating <= -2) return 'Below Average';
+    if (rating <= 0) return 'Average';
+    if (rating <= 2) return 'Above Average';
+    if (rating <= 4) return 'Good';
+    if (rating <= 6) return 'Very Good';
+    if (rating <= 8) return 'Excellent';
+    return 'Outstanding';
   }
 }

@@ -139,152 +139,181 @@ class _LocationListScreenState extends State<LocationListScreen> {
     final distance = locationService.getDistanceToLocation(location);
     final distanceText = distance > 0 ? '${(distance * 0.000621371).toStringAsFixed(1)} mi' : 'Distance unknown';
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
-      child: InkWell(
-        onTap: () => context.go('/location/${location.id}'),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.go('/location/${location.id}'),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: FaIcon(
+                        FontAwesomeIcons.drumstickBite,
+                        color: const Color(0xFFFF6B35),
+                        size: 20,
+                      ),
                     ),
-                    child: FaIcon(
-                      FontAwesomeIcons.drumstickBite,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 20,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            location.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.locationDot,
+                                size: 12,
+                                color: Colors.grey[600],
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  location.address,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 13,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.star,
+                            color: Colors.amber[600],
+                            size: 12,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            location.averageRating.toStringAsFixed(1),
+                            style: TextStyle(
+                              color: Colors.amber[700],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.locationArrow,
+                            size: 10,
+                            color: Colors.grey[600],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            distanceText,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '${location.totalReviews} reviews',
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 11,
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
                       children: [
-                        Text(
-                          location.name,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6B35).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: GestureDetector(
+                            onTap: () => _showQuickRateDialog(context, location),
+                            child: FaIcon(
+                              FontAwesomeIcons.bolt,
+                              color: const Color(0xFFFF6B35),
+                              size: 14,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.locationDot,
-                              size: 12,
-                              color: Colors.grey[600],
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go('/rate/${location.id}'),
+                          icon: const FaIcon(FontAwesomeIcons.star, size: 12),
+                          label: const Text('Rate'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF6B35),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                location.address,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Colors.grey[600],
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      location.ratingDisplay,
-                      style: TextStyle(
-                        color: Colors.orange[800],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  FaIcon(
-                    FontAwesomeIcons.locationArrow,
-                    size: 12,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    distanceText,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  if (location.phone.isNotEmpty) ...[
-                    IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.phone, size: 16),
-                      onPressed: () {
-                        // TODO: Implement phone call functionality
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Call ${location.phone}')),
-                        );
-                      },
-                      tooltip: 'Call',
-                    ),
                   ],
-                  if (location.website.isNotEmpty) ...[
-                    IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.globe, size: 16),
-                      onPressed: () {
-                        // TODO: Implement website opening
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Visit ${location.website}')),
-                        );
-                      },
-                      tooltip: 'Website',
-                    ),
-                  ],
-                  const Spacer(),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => _showQuickRateDialog(context, location),
-                        icon: const FaIcon(FontAwesomeIcons.bolt, size: 14),
-                        tooltip: 'Quick Rate',
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.orange.withOpacity(0.1),
-                          foregroundColor: Colors.orange,
-                          padding: const EdgeInsets.all(8),
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () => context.go('/rate/${location.id}'),
-                        icon: const FaIcon(FontAwesomeIcons.star, size: 14),
-                        label: const Text('Rate'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

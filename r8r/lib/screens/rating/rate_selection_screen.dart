@@ -3,11 +3,16 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/location_service.dart';
-import '../../widgets/quick_rate_dialog.dart';
+import '../../services/rating_service.dart';
 
-class RateSelectionScreen extends StatelessWidget {
+class RateSelectionScreen extends StatefulWidget {
   const RateSelectionScreen({super.key});
 
+  @override
+  State<RateSelectionScreen> createState() => _RateSelectionScreenState();
+}
+
+class _RateSelectionScreenState extends State<RateSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,9 +22,10 @@ class RateSelectionScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
-      body: Consumer<LocationService>(
-        builder: (context, locationService, _) {
+      body: Consumer2<LocationService, RatingService>(
+        builder: (context, locationService, ratingService, _) {
           final locations = locationService.locations;
+          final recentReviews = ratingService.recentReviews;
           
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -27,152 +33,158 @@ class RateSelectionScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header section
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: FaIcon(
-                            FontAwesomeIcons.drumstickBite,
-                            size: 48,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Rate Your Wing Experience',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Select a location to rate your wing and beer experience',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFFFF6B35),
+                        const Color(0xFFFF8A50),
                       ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: FaIcon(
+                          FontAwesomeIcons.drumstickBite,
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Rate Your Experience',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Share your thoughts on wings and beer',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Single Rate Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton.icon(
+                    onPressed: () => context.go('/rate-new'),
+                    icon: const FaIcon(FontAwesomeIcons.star, size: 20),
+                    label: const Text(
+                      'Rate Wings & Beer',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6B35),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-
-                // Quick rate section
-                Text(
-                  'Quick Rate',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
                 
-                Card(
+                const SizedBox(height: 24),
+                
+                // Add New Location option
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(20),
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.plus,
-                        color: Colors.orange,
+                        color: Colors.green[700],
+                        size: 20,
                       ),
                     ),
-                    title: const Text('Add New Location'),
+                    title: const Text(
+                      'Add New Location',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     subtitle: const Text('Rate a wing spot not in our database'),
                     trailing: const FaIcon(FontAwesomeIcons.arrowRight),
-                    onTap: () {
-                      // TODO: Implement add new location
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Add new location feature coming soon!'),
+                    onTap: () => context.go('/add-location'),
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Recent Reviews Section
+                if (recentReviews.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Text(
+                        'Recent Reviews',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
-                      );
-                    },
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-
-                // Recent locations section
-                Text(
-                  'Recent Locations',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                if (locations.isEmpty)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Column(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.mapLocationDot,
-                            size: 48,
-                            color: Colors.grey[400],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No locations found',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Check out nearby wing spots first!',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[500],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
                       ),
-                    ),
-                  )
-                else
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: locations.take(5).length, // Show top 5 locations
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final location = locations[index];
-                      return _buildLocationCard(context, location);
-                    },
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: Navigate to all reviews
+                        },
+                        child: Text(
+                          'View All',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-
-                const SizedBox(height: 24),
-
-                // Browse all locations button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () => context.go('/locations'),
-                    icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
-                    label: const Text('Browse All Locations'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+                  
+                  ...recentReviews.take(3).map((review) => _buildReviewCard(context, review)).toList(),
+                ],
               ],
             ),
           );
@@ -181,99 +193,127 @@ class RateSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLocationCard(BuildContext context, location) {
-    return Card(
-      child: InkWell(
-        onTap: () => context.go('/rate/${location.id}'),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: FaIcon(
-                  FontAwesomeIcons.drumstickBite,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      location.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      location.address,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.star,
-                          size: 12,
-                          color: Colors.orange,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          location.ratingDisplay,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                children: [
-                  IconButton(
-                    onPressed: () => _showQuickRateDialog(context, location),
-                    icon: const FaIcon(FontAwesomeIcons.bolt),
-                    tooltip: 'Quick Rate',
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.orange.withOpacity(0.1),
-                      foregroundColor: Colors.orange,
-                    ),
+  Widget _buildReviewCard(BuildContext context, review) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  FaIcon(
-                    FontAwesomeIcons.arrowRight,
-                    color: Colors.grey[400],
+                  child: FaIcon(
+                    FontAwesomeIcons.drumstickBite,
+                    color: const Color(0xFFFF6B35),
                     size: 16,
                   ),
-                ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        review.locationName ?? 'Unknown Location',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        'by ${review.userName}',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.star,
+                        color: Colors.amber[600],
+                        size: 10,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        review.overallRating.toStringAsFixed(1),
+                        style: TextStyle(
+                          color: Colors.amber[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (review.comment != null && review.comment!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                review.comment!,
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 13,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
-          ),
+            const SizedBox(height: 8),
+            Text(
+              _formatDate(review.createdAt),
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 11,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void _showQuickRateDialog(BuildContext context, location) {
-    showDialog(
-      context: context,
-      builder: (context) => QuickRateDialog(
-        locationId: location.id,
-        locationName: location.name,
-      ),
-    );
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
   }
 }

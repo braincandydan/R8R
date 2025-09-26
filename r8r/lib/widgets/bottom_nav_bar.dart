@@ -15,17 +15,21 @@ class CustomBottomNavBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
           ),
         ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -76,13 +80,14 @@ class CustomBottomNavBar extends StatelessWidget {
     bool isCenter = false,
   }) {
     final theme = Theme.of(context);
-    final activeColor = theme.colorScheme.primary;
-    final inactiveColor = Colors.grey[600]!;
+    final activeColor = const Color(0xFFFF6B35);
+    final inactiveColor = Colors.grey[500]!;
     
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(
             vertical: isCenter ? 16.0 : 12.0,
             horizontal: 8.0,
@@ -91,40 +96,41 @@ class CustomBottomNavBar extends StatelessWidget {
             color: isActive && isCenter
                 ? activeColor.withOpacity(0.1)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: isActive && isCenter
-                ? Border.all(color: activeColor.withOpacity(0.3), width: 1)
-                : null,
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.all(isCenter ? 12.0 : 8.0),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: EdgeInsets.all(isCenter ? 14.0 : 10.0),
                 decoration: BoxDecoration(
                   color: isActive
                       ? activeColor
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(isCenter ? 16 : 12),
-                  border: isActive
-                      ? null
-                      : Border.all(
-                          color: inactiveColor.withOpacity(0.3),
-                          width: 1,
-                        ),
+                  borderRadius: BorderRadius.circular(isCenter ? 18 : 14),
+                  boxShadow: isActive
+                      ? [
+                          BoxShadow(
+                            color: activeColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: FaIcon(
                   icon,
-                  size: isCenter ? 24.0 : 20.0,
+                  size: isCenter ? 26.0 : 22.0,
                   color: isActive ? Colors.white : inactiveColor,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: isCenter ? 12.0 : 10.0,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  fontSize: isCenter ? 13.0 : 11.0,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
                   color: isActive ? activeColor : inactiveColor,
                 ),
                 textAlign: TextAlign.center,

@@ -7,6 +7,8 @@ import '../../services/auth_service.dart';
 import '../../services/location_service.dart';
 import '../../services/rating_service.dart';
 import '../../models/rating_model.dart';
+import '../../widgets/wing_flavor_selector.dart';
+import '../../widgets/photo_capture_widget.dart';
 
 class RatingScreen extends StatefulWidget {
   final String locationId;
@@ -29,6 +31,9 @@ class _RatingScreenState extends State<RatingScreen> {
   double _wingSize = 3.0;
   double _beerSelection = 3.0;
   double _beerPairing = 3.0;
+  
+  List<String> _selectedWingFlavors = [];
+  List<String> _photoPaths = [];
 
   @override
   void dispose() {
@@ -72,12 +77,24 @@ class _RatingScreenState extends State<RatingScreen> {
       beerPairing: _beerPairing.round(),
     );
 
+    // Build enhanced comment with flavors and photos
+    String enhancedComment = '';
+    if (_selectedWingFlavors.isNotEmpty) {
+      enhancedComment += 'Wing Flavors: ${_selectedWingFlavors.join(', ')}\n';
+    }
+    if (_photoPaths.isNotEmpty) {
+      enhancedComment += 'Photos: ${_photoPaths.length} image(s) attached\n';
+    }
+    if (_commentController.text.trim().isNotEmpty) {
+      enhancedComment += _commentController.text.trim();
+    }
+
     await ratingService.submitRating(
       locationId: widget.locationId,
       userId: authService.currentUserId!,
       userName: authService.currentUserName ?? 'Anonymous',
       rating: rating,
-      comment: _commentController.text.trim().isEmpty ? null : _commentController.text.trim(),
+      comment: enhancedComment.isEmpty ? null : enhancedComment,
     );
 
     if (mounted) {
@@ -348,6 +365,46 @@ class _RatingScreenState extends State<RatingScreen> {
                               ],
                             ),
                           ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Wing flavors section
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                        ),
+                        child: WingFlavorSelector(
+                          selectedFlavors: _selectedWingFlavors,
+                          onFlavorsChanged: (flavors) {
+                            setState(() {
+                              _selectedWingFlavors = flavors;
+                            });
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Photo capture section
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.blue.withOpacity(0.2)),
+                        ),
+                        child: PhotoCaptureWidget(
+                          imagePaths: _photoPaths,
+                          onImagesChanged: (images) {
+                            setState(() {
+                              _photoPaths = images;
+                            });
+                          },
                         ),
                       ),
 
