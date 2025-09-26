@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "943531801651",
+    "project_id": "r8r-app-fdd36",
+    "storage_bucket": "r8r-app-fdd36.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943531801651:android:dd6179807abb4de5f07746",
+        "android_client_info": {
+          "package_name": "com.r8r.app.r8r"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB9Gj70O84ksNt2RIdJnEaqNLnUlZqXLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
