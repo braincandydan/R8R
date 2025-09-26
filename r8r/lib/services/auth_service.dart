@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   
   bool _isAuthenticated = false;
   String? _currentUserId;
@@ -102,9 +104,53 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  Future<bool> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      
+      if (googleUser == null) {
+        // User cancelled the sign-in
+        return false;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final UserCredential result = await _auth.signInWithCredential(credential);
+      
+      if (result.user != null) {
+        // Check if this is a new user
+        final isNewUser = result.additionalUserInfo?.isNewUser ?? false;
+        
+        if (isNewUser) {
+          // Create user document for new users
+          await _createUserDocument(result.user!, result.user!.displayName ?? 'Google User');
+        } else {
+          // Update existing user's last login
+          await _updateUserProfile(result.user!);
+        }
+        
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Google sign-in error: $e');
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     try {
       await _auth.signOut();
+      await _googleSignIn.signOut();
     } catch (e) {
       debugPrint('Logout error: $e');
     }

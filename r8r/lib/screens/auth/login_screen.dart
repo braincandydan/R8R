@@ -66,6 +66,30 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isLoading = true);
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final success = await authService.signInWithGoogle();
+
+    setState(() => _isLoading = false);
+
+    if (success) {
+      if (mounted) {
+        context.go('/home');
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Google sign-in failed'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,6 +221,57 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _isLogin ? 'Login' : 'Sign Up',
                                     style: const TextStyle(fontSize: 16),
                                   ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Divider
+                        Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                'OR',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Google Sign-In button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: OutlinedButton.icon(
+                            onPressed: _isLoading ? null : _signInWithGoogle,
+                            icon: Image.asset(
+                              'assets/images/google_logo.png',
+                              height: 20,
+                              width: 20,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.login,
+                                  color: Colors.red,
+                                  size: 20,
+                                );
+                              },
+                            ),
+                            label: const Text(
+                              'Continue with Google',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.grey[300]!),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
