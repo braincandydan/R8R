@@ -44,37 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: 'YOUR_WEB_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyBvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ',
+    appId: '1:123456789012:web:abcdef1234567890abcdef',
+    messagingSenderId: '123456789012',
+    projectId: 'r8r-app-fdd36',
+    authDomain: 'r8r-app-fdd36.firebaseapp.com',
+    storageBucket: 'r8r-app-fdd36.appspot.com',
+    measurementId: 'G-XXXXXXXXXX',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: 'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyBvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ',
+    appId: '1:123456789012:android:abcdef1234567890abcdef',
+    messagingSenderId: '123456789012',
+    projectId: 'r8r-app-fdd36',
+    storageBucket: 'r8r-app-fdd36.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyBvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ',
+    appId: '1:123456789012:ios:abcdef1234567890abcdef',
+    messagingSenderId: '123456789012',
+    projectId: 'r8r-app-fdd36',
+    storageBucket: 'r8r-app-fdd36.appspot.com',
     iosBundleId: 'com.example.r8r',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'YOUR_MACOS_API_KEY',
-    appId: 'YOUR_MACOS_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
+    apiKey: 'AIzaSyBvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ2XvQ',
+    appId: '1:123456789012:ios:abcdef1234567890abcdef',
+    messagingSenderId: '123456789012',
+    projectId: 'r8r-app-fdd36',
+    storageBucket: 'r8r-app-fdd36.appspot.com',
     iosBundleId: 'com.example.r8r',
   );
 }
