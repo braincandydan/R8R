@@ -1,4 +1,7 @@
 {
+  "buildCommand": "curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.9-stable.tar.xz | tar -xJ && export PATH=\"$PWD/flutter/bin:$PATH\" && flutter pub get && flutter build web",
+  "outputDirectory": "build/web",
+  "framework": null,
   "headers": [
     {
       "source": "/service-worker.js",

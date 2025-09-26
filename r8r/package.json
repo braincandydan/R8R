@@ -1,0 +1,12 @@
+{
+  "name": "r8r",
+  "version": "1.0.0",
+  "description": "R8R - The definitive digital hub for chicken wing and beer enthusiasts",
+  "scripts": {
+    "build": "flutter build web",
+    "dev": "flutter run -d web-server --web-port 3000"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
