@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "R8R - The definitive digital hub for chicken wing and beer enthusiasts",
   "scripts": {
-    "build": "flutter build web",
+    "build": "bash build.sh",
     "dev": "flutter run -d web-server --web-port 3000"
   },
   "engines": {

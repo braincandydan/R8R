@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R8R - Wing & Beer App</title>
+  <meta name="description" content="The definitive digital hub for chicken wing and beer enthusiasts">
+  <meta name="theme-color" content="#FF6B35">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #FF6B35, #FF8A50);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      text-align: center;
+      color: white;
+      max-width: 600px;
+      padding: 2rem;
+    }
+    .logo {
+      font-size: 4rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .subtitle {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    .message {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+    .button {
+      display: inline-block;
+      background: white;
+      color: #FF6B35;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: transform 0.2s;
+    }
+    .button:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">🍗 R8R 🍺</div>
+    <div class="subtitle">Wing & Beer App</div>
+    <div class="message">
+      The definitive digital hub for chicken wing and beer enthusiasts.<br>
+      Discover, rate, and share great food and drink.
+    </div>
+    <a href="#" class="button" onclick="alert('App is being deployed! Check back soon.')">
+      Coming Soon!
+    </a>
+  </div>
+</body>
+</html>

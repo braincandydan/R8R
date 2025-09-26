@@ -1,0 +1,10 @@
+# Ignore everything except what we need
+*
+!lib/
+!web/
+!pubspec.yaml
+!analysis_options.yaml
+!README.md
+!vercel.json
+!package.json
+!build.sh
