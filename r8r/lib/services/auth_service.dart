@@ -109,16 +109,22 @@ class AuthService extends ChangeNotifier {
 
   Future<bool> signInWithGoogle() async {
     try {
+      debugPrint('Starting Google sign-in...');
+      
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
-        // User cancelled the sign-in
+        debugPrint('User cancelled Google sign-in');
         return false;
       }
 
+      debugPrint('Google user obtained: ${googleUser.email}');
+
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      debugPrint('Google auth tokens obtained');
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -126,10 +132,14 @@ class AuthService extends ChangeNotifier {
         idToken: googleAuth.idToken,
       );
 
+      debugPrint('Firebase credential created');
+
       // Sign in to Firebase with the Google credential
       final UserCredential result = await _auth.signInWithCredential(credential);
       
       if (result.user != null) {
+        debugPrint('Firebase sign-in successful: ${result.user!.email}');
+        
         // Check if this is a new user
         final isNewUser = result.additionalUserInfo?.isNewUser ?? false;
         
@@ -143,9 +153,11 @@ class AuthService extends ChangeNotifier {
         
         return true;
       }
+      debugPrint('Firebase sign-in failed: no user returned');
       return false;
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Google sign-in error: $e');
+      debugPrint('Stack trace: $stackTrace');
       return false;
     }
   }
