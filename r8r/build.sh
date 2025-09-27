@@ -23,6 +23,10 @@ flutter precache --web
 echo "Verifying Flutter installation..."
 flutter --version
 
+# Clean previous builds
+echo "Cleaning previous builds..."
+flutter clean
+
 # Get dependencies
 echo "Getting Flutter dependencies..."
 flutter pub get
