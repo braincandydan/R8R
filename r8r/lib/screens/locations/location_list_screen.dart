@@ -104,6 +104,13 @@ class _LocationListScreenState extends State<LocationListScreen> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.go('/add-location'),
+        backgroundColor: const Color(0xFFFF6B35),
+        foregroundColor: Colors.white,
+        icon: const FaIcon(FontAwesomeIcons.plus, size: 20),
+        label: const Text('Add Location'),
+      ),
       body: Consumer<LocationService>(
         builder: (context, locationService, _) {
           if (locationService.isLoading) {

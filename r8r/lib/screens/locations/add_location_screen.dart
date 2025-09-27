@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../services/location_service.dart';
 import '../../models/location_model.dart';
+import '../../services/places_service.dart';
+import '../../services/location_service.dart';
 
 class AddLocationScreen extends StatefulWidget {
   const AddLocationScreen({super.key});
@@ -18,10 +21,21 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
   final _websiteController = TextEditingController();
-  final _latitudeController = TextEditingController();
-  final _longitudeController = TextEditingController();
+  final _descriptionController = TextEditingController();
   
-  bool _isSubmitting = false;
+  double? _latitude;
+  double? _longitude;
+  bool _isLoading = false;
+  bool _isGettingLocation = false;
+  
+  final List<String> _selectedTags = [];
+  final List<String> _availableTags = [
+    'wings', 'beer', 'bar', 'grill', 'pub', 'sports-bar',
+    'outdoor-seating', 'live-music', 'trivia', 'karaoke',
+    'pool-table', 'darts', 'happy-hour', 'craft-beer',
+    'buffalo-wings', 'boneless-wings', 'hot-sauce',
+    'family-friendly', 'takeout', 'delivery'
+  ];
 
   @override
   void dispose() {
@@ -29,9 +43,191 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
     _addressController.dispose();
     _phoneController.dispose();
     _websiteController.dispose();
-    _latitudeController.dispose();
-    _longitudeController.dispose();
+    _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isGettingLocation = true;
+    });
+
+    try {
+      // Check permissions
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Location services are disabled');
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Location permissions are permanently denied');
+      }
+
+      // Get position
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Get address from coordinates
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        final address = '${placemark.street}, ${placemark.locality}, ${placemark.administrativeArea} ${placemark.postalCode}';
+        _addressController.text = address;
+      }
+
+      setState(() {
+        _latitude = position.latitude;
+        _longitude = position.longitude;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location found!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error getting location: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() {
+        _isGettingLocation = false;
+      });
+    }
+  }
+
+  Future<void> _geocodeAddress() async {
+    if (_addressController.text.isEmpty) return;
+
+    setState(() {
+      _isGettingLocation = true;
+    });
+
+    try {
+      final locations = await locationFromAddress(_addressController.text);
+      if (locations.isNotEmpty) {
+        final location = locations.first;
+        setState(() {
+          _latitude = location.latitude;
+          _longitude = location.longitude;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Address geocoded successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error geocoding address: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() {
+        _isGettingLocation = false;
+      });
+    }
+  }
+
+  Future<void> _submitLocation() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_latitude == null || _longitude == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please set the location coordinates'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final location = LocationModel(
+        id: '', // Will be generated by Firestore
+        name: _nameController.text.trim(),
+        address: _addressController.text.trim(),
+        phone: _phoneController.text.trim(),
+        website: _websiteController.text.trim(),
+        latitude: _latitude!,
+        longitude: _longitude!,
+        createdBy: '', // Will be set by UserLocationService
+        createdAt: DateTime.now(),
+        tags: _selectedTags,
+        description: _descriptionController.text.trim().isNotEmpty 
+            ? _descriptionController.text.trim() 
+            : null,
+      );
+
+      final locationId = await UserLocationService.addLocation(location);
+      
+      if (locationId != null && mounted) {
+        // Refresh the location list
+        final locationService = Provider.of<LocationService>(context, listen: false);
+        locationService.refreshRestaurants();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location added successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        context.pop();
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to add location'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error adding location: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -43,276 +239,276 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
         foregroundColor: Colors.white,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: FaIcon(
-                          FontAwesomeIcons.mapLocationDot,
-                          size: 48,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Add a New Wing Location',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Help the community discover new wing spots!',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
               ),
-              const SizedBox(height: 24),
-
-              // Location Details Section
-              Text(
-                'Location Details',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Name field
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Restaurant Name *',
-                  hintText: 'e.g., Buffalo Wild Wings',
-                  prefixIcon: Icon(Icons.restaurant),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter the restaurant name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Address field
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Address *',
-                  hintText: 'e.g., 123 Main St, City, State 12345',
-                  prefixIcon: Icon(Icons.location_on),
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter the address';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Phone field
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  hintText: 'e.g., (555) 123-4567',
-                  prefixIcon: Icon(Icons.phone),
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-
-              // Website field
-              TextFormField(
-                controller: _websiteController,
-                decoration: const InputDecoration(
-                  labelText: 'Website',
-                  hintText: 'e.g., https://www.restaurant.com',
-                  prefixIcon: Icon(Icons.web),
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.url,
-              ),
-              const SizedBox(height: 24),
-
-              // Coordinates Section
-              Text(
-                'Coordinates (Optional)',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Add coordinates for more accurate location tracking',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _latitudeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Latitude',
-                        hintText: '40.7128',
-                        prefixIcon: Icon(Icons.my_location),
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  FaIcon(
+                    FontAwesomeIcons.drumstickBite,
+                    color: const Color(0xFFFF6B35),
+                    size: 40,
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Add a Wing Spot',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _longitudeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Longitude',
-                        hintText: '-74.0060',
-                        prefixIcon: Icon(Icons.my_location),
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Help the community discover great places for wings and beer!',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Get current location button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: _getCurrentLocation,
-                  icon: const FaIcon(FontAwesomeIcons.locationArrow),
-                  label: const Text('Use Current Location'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Name field
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Restaurant Name *',
+                prefixIcon: const FaIcon(FontAwesomeIcons.utensils, size: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              const SizedBox(height: 32),
-
-              // Submit button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submitLocation,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter a restaurant name';
+                }
+                return null;
+              },
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Address field with location button
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _addressController,
+                    decoration: InputDecoration(
+                      labelText: 'Address *',
+                      prefixIcon: const FaIcon(FontAwesomeIcons.locationDot, size: 20),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter an address';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      // Clear coordinates when address changes
+                      if (_latitude != null || _longitude != null) {
+                        setState(() {
+                          _latitude = null;
+                          _longitude = null;
+                        });
+                      }
+                    },
                   ),
-                  child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Add Location',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  children: [
+                    IconButton(
+                      onPressed: _isGettingLocation ? null : _getCurrentLocation,
+                      icon: _isGettingLocation
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const FaIcon(FontAwesomeIcons.locationCrosshairs, size: 20),
+                      tooltip: 'Use current location',
+                    ),
+                    IconButton(
+                      onPressed: _isGettingLocation ? null : _geocodeAddress,
+                      icon: const FaIcon(FontAwesomeIcons.magnifyingGlass, size: 20),
+                      tooltip: 'Geocode address',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            
+            // Location status
+            if (_latitude != null && _longitude != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: [
+                    const FaIcon(
+                      FontAwesomeIcons.check,
+                      color: Colors.green,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Location set: ${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}',
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-            ],
-          ),
+            
+            const SizedBox(height: 16),
+            
+            // Phone field
+            TextFormField(
+              controller: _phoneController,
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                prefixIcon: const FaIcon(FontAwesomeIcons.phone, size: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              keyboardType: TextInputType.phone,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Website field
+            TextFormField(
+              controller: _websiteController,
+              decoration: InputDecoration(
+                labelText: 'Website',
+                prefixIcon: const FaIcon(FontAwesomeIcons.globe, size: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              keyboardType: TextInputType.url,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Description field
+            TextFormField(
+              controller: _descriptionController,
+              decoration: InputDecoration(
+                labelText: 'Description',
+                prefixIcon: const FaIcon(FontAwesomeIcons.pen, size: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                hintText: 'Tell us what makes this place special...',
+              ),
+              maxLines: 3,
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // Tags section
+            const Text(
+              'Tags',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select tags that describe this place:',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _availableTags.map((tag) {
+                final isSelected = _selectedTags.contains(tag);
+                return FilterChip(
+                  label: Text(tag),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        _selectedTags.add(tag);
+                      } else {
+                        _selectedTags.remove(tag);
+                      }
+                    });
+                  },
+                  backgroundColor: Colors.grey[200],
+                  selectedColor: const Color(0xFFFF6B35).withOpacity(0.2),
+                  checkmarkColor: const Color(0xFFFF6B35),
+                );
+              }).toList(),
+            ),
+            
+            const SizedBox(height: 32),
+            
+            // Submit button
+            ElevatedButton(
+              onPressed: _isLoading ? null : _submitLocation,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6B35),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      'Add Location',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Cancel button
+            TextButton(
+              onPressed: _isLoading ? null : () => context.pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Future<void> _getCurrentLocation() async {
-    final locationService = Provider.of<LocationService>(context, listen: false);
-    await locationService.getCurrentLocation();
-    
-    if (locationService.currentPosition != null) {
-      setState(() {
-        _latitudeController.text = locationService.currentPosition!.latitude.toString();
-        _longitudeController.text = locationService.currentPosition!.longitude.toString();
-      });
-    }
-  }
-
-  Future<void> _submitLocation() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isSubmitting = true);
-
-    try {
-      // Create new location
-      final newLocation = LocationModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text.trim(),
-        address: _addressController.text.trim(),
-        phone: _phoneController.text.trim(),
-        website: _websiteController.text.trim(),
-        latitude: double.tryParse(_latitudeController.text) ?? 0.0,
-        longitude: double.tryParse(_longitudeController.text) ?? 0.0,
-        averageRating: 0.0,
-        totalReviews: 0,
-      );
-
-      // Add to location service
-      final locationService = Provider.of<LocationService>(context, listen: false);
-      // Note: In a real app, this would be sent to a backend
-      // For now, we'll just show success and navigate back
-      
-      setState(() => _isSubmitting = false);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${newLocation.name} added successfully!'),
-            backgroundColor: Colors.green,
-            action: SnackBarAction(
-              label: 'Rate Now',
-              textColor: Colors.white,
-              onPressed: () {
-                context.go('/rate/${newLocation.id}');
-              },
-            ),
-          ),
-        );
-        context.pop();
-      }
-    } catch (e) {
-      setState(() => _isSubmitting = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error adding location: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 }

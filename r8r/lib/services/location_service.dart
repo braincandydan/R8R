@@ -36,6 +36,9 @@ class LocationService extends ChangeNotifier {
         longitude: -74.0060,
         averageRating: 4.2,
         totalReviews: 156,
+        createdBy: 'system',
+        createdAt: DateTime.now(),
+        tags: ['wings', 'beer', 'sports-bar'],
       ),
       LocationModel(
         id: '2',
@@ -47,6 +50,9 @@ class LocationService extends ChangeNotifier {
         longitude: -73.9851,
         averageRating: 4.5,
         totalReviews: 89,
+        createdBy: 'system',
+        createdAt: DateTime.now(),
+        tags: ['wings', 'takeout'],
       ),
       LocationModel(
         id: '3',
@@ -58,6 +64,9 @@ class LocationService extends ChangeNotifier {
         longitude: -73.9934,
         averageRating: 3.8,
         totalReviews: 234,
+        createdBy: 'system',
+        createdAt: DateTime.now(),
+        tags: ['wings', 'beer', 'sports-bar'],
       ),
       LocationModel(
         id: '4',
@@ -69,6 +78,9 @@ class LocationService extends ChangeNotifier {
         longitude: -73.7949,
         averageRating: 4.7,
         totalReviews: 45,
+        createdBy: 'system',
+        createdAt: DateTime.now(),
+        tags: ['wings', 'beer', 'local'],
       ),
     ];
     notifyListeners();
@@ -174,57 +186,48 @@ class LocationService extends ChangeNotifier {
     
     return _locations.where((location) =>
       location.name.toLowerCase().contains(query.toLowerCase()) ||
-      location.address.toLowerCase().contains(query.toLowerCase())
+      location.address.toLowerCase().contains(query.toLowerCase()) ||
+      location.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase())) ||
+      (location.description?.toLowerCase().contains(query.toLowerCase()) ?? false)
     ).toList();
   }
 
-  /// Load real restaurants from Google Places API
+  /// Load user-submitted restaurants
   Future<void> loadRealRestaurants() async {
-    if (_currentPosition == null) {
-      debugPrint('No current position available for loading real restaurants');
-      return;
-    }
-
     try {
-      debugPrint('Loading real restaurants from Google Places API...');
+      debugPrint('Loading user-submitted restaurants...');
       
-      // Search for wing restaurants
-      final realRestaurants = await PlacesService.searchWingRestaurants(
-        latitude: _currentPosition!.latitude,
-        longitude: _currentPosition!.longitude,
-      );
-
-      // Also search for popular wing chains
-      final chainRestaurants = await PlacesService.searchWingChains(
-        latitude: _currentPosition!.latitude,
-        longitude: _currentPosition!.longitude,
-      );
-
-      // Combine and deduplicate results
-      final allRestaurants = <String, LocationModel>{};
+      List<LocationModel> userRestaurants;
       
-      // Add chain restaurants first (usually more reliable)
-      for (final restaurant in chainRestaurants) {
-        allRestaurants[restaurant.id] = restaurant;
-      }
-      
-      // Add other wing restaurants
-      for (final restaurant in realRestaurants) {
-        allRestaurants[restaurant.id] = restaurant;
-      }
-
-      if (allRestaurants.isNotEmpty) {
-        _locations = allRestaurants.values.toList();
-        _sortLocationsByDistance();
-        debugPrint('Loaded ${_locations.length} real restaurants');
+      if (_currentPosition != null) {
+        // Get nearby restaurants if we have location
+        userRestaurants = await UserLocationService.searchNearbyLocations(
+          latitude: _currentPosition!.latitude,
+          longitude: _currentPosition!.longitude,
+        );
       } else {
-        debugPrint('No real restaurants found, keeping mock data');
-        _sortLocationsByDistance();
+        // Get all restaurants if no location
+        userRestaurants = await UserLocationService.getAllLocations();
+      }
+
+      if (userRestaurants.isNotEmpty) {
+        _locations = userRestaurants;
+        if (_currentPosition != null) {
+          _sortLocationsByDistance();
+        }
+        debugPrint('Loaded ${_locations.length} user-submitted restaurants');
+      } else {
+        debugPrint('No user restaurants found, keeping mock data');
+        if (_currentPosition != null) {
+          _sortLocationsByDistance();
+        }
       }
     } catch (e) {
-      debugPrint('Error loading real restaurants: $e');
-      // Keep existing locations (mock data) if API fails
-      _sortLocationsByDistance();
+      debugPrint('Error loading user restaurants: $e');
+      // Keep existing locations (mock data) if loading fails
+      if (_currentPosition != null) {
+        _sortLocationsByDistance();
+      }
     }
   }
 
