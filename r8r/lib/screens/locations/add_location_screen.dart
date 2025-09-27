@@ -248,14 +248,14 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                color: const Color(0xFFD00000).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
                   FaIcon(
                     FontAwesomeIcons.drumstickBite,
-                    color: const Color(0xFFFF6B35),
+                    color: const Color(0xFFD00000),
                     size: 40,
                   ),
                   const SizedBox(height: 12),
@@ -462,8 +462,8 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                     });
                   },
                   backgroundColor: Colors.grey[200],
-                  selectedColor: const Color(0xFFFF6B35).withOpacity(0.2),
-                  checkmarkColor: const Color(0xFFFF6B35),
+                  selectedColor: const Color(0xFFD00000).withOpacity(0.2),
+                  checkmarkColor: const Color(0xFFD00000),
                 );
               }).toList(),
             ),
@@ -474,7 +474,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
             ElevatedButton(
               onPressed: _isLoading ? null : _submitLocation,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6B35),
+                backgroundColor: const Color(0xFFD00000),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(

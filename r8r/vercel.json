@@ -3,19 +3,7 @@
   "outputDirectory": "r8r/build/web",
   "framework": null,
   "installCommand": "echo 'No install needed'",
-  "functions": {
-    "r8r/api/places.js": {
-      "memory": 128
-    }
-  },
-  "env": {
-    "GOOGLE_PLACES_API_KEY": "@google_places_api_key"
-  },
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/r8r/api/$1"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

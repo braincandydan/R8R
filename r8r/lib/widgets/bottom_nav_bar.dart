@@ -80,7 +80,7 @@ class CustomBottomNavBar extends StatelessWidget {
     bool isCenter = false,
   }) {
     final theme = Theme.of(context);
-    final activeColor = const Color(0xFFFF6B35);
+    final activeColor = const Color(0xFFD00000);
     final inactiveColor = Colors.grey[500]!;
     
     return Expanded(

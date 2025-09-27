@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -42,9 +43,10 @@ class R8RApp extends StatelessWidget {
             title: 'R8R - Wing & Beer App',
       theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFFFF6B35), // Modern orange
+                seedColor: const Color(0xFFD00000), // Red accent color
                 brightness: Brightness.light,
               ),
+              textTheme: GoogleFonts.montserratTextTheme(),
               useMaterial3: true,
               appBarTheme: const AppBarTheme(
                 centerTitle: true,
@@ -78,7 +80,7 @@ class R8RApp extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFFFF6B35), width: 2),
+                  borderSide: const BorderSide(color: Color(0xFFD00000), width: 2),
                 ),
                 filled: true,
                 fillColor: Colors.grey[50],

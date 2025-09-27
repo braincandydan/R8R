@@ -106,7 +106,7 @@ class _LocationListScreenState extends State<LocationListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.go('/add-location'),
-        backgroundColor: const Color(0xFFFF6B35),
+        backgroundColor: const Color(0xFFD00000),
         foregroundColor: Colors.white,
         icon: const FaIcon(FontAwesomeIcons.plus, size: 20),
         label: const Text('Add Location'),
@@ -205,12 +205,12 @@ class _LocationListScreenState extends State<LocationListScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        color: const Color(0xFFD00000).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.drumstickBite,
-                        color: const Color(0xFFFF6B35),
+                        color: const Color(0xFFD00000),
                         size: 20,
                       ),
                     ),
@@ -320,14 +320,14 @@ class _LocationListScreenState extends State<LocationListScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF6B35).withOpacity(0.1),
+                            color: const Color(0xFFD00000).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: GestureDetector(
                             onTap: () => _showQuickRateDialog(context, location),
                             child: FaIcon(
                               FontAwesomeIcons.bolt,
-                              color: const Color(0xFFFF6B35),
+                              color: const Color(0xFFD00000),
                               size: 14,
                             ),
                           ),
@@ -338,7 +338,7 @@ class _LocationListScreenState extends State<LocationListScreen> {
                           icon: const FaIcon(FontAwesomeIcons.star, size: 12),
                           label: const Text('Rate'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF6B35),
+                            backgroundColor: const Color(0xFFD00000),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             shape: RoundedRectangleBorder(

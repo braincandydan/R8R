@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/location_model.dart';
+import '../data/seed_locations.dart';
 import 'places_service.dart';
 
 class LocationService extends ChangeNotifier {
@@ -24,64 +25,10 @@ class LocationService extends ChangeNotifier {
   }
 
   void _loadMockData() {
-    // Mock data for MVP - fallback when real data fails
+    // Load seed locations for your area - customize in /lib/data/seed_locations.dart
     _locations = [
-      LocationModel(
-        id: '1',
-        name: 'Buffalo Wild Wings',
-        address: '123 Main St, City, State 12345',
-        phone: '(555) 123-4567',
-        website: 'https://www.buffalowildwings.com',
-        latitude: 40.7128,
-        longitude: -74.0060,
-        averageRating: 4.2,
-        totalReviews: 156,
-        createdBy: 'system',
-        createdAt: DateTime.now(),
-        tags: ['wings', 'beer', 'sports-bar'],
-      ),
-      LocationModel(
-        id: '2',
-        name: 'Wingstop',
-        address: '456 Oak Ave, City, State 12345',
-        phone: '(555) 987-6543',
-        website: 'https://www.wingstop.com',
-        latitude: 40.7589,
-        longitude: -73.9851,
-        averageRating: 4.5,
-        totalReviews: 89,
-        createdBy: 'system',
-        createdAt: DateTime.now(),
-        tags: ['wings', 'takeout'],
-      ),
-      LocationModel(
-        id: '3',
-        name: 'Hooters',
-        address: '789 Pine St, City, State 12345',
-        phone: '(555) 456-7890',
-        website: 'https://www.hooters.com',
-        latitude: 40.7505,
-        longitude: -73.9934,
-        averageRating: 3.8,
-        totalReviews: 234,
-        createdBy: 'system',
-        createdAt: DateTime.now(),
-        tags: ['wings', 'beer', 'sports-bar'],
-      ),
-      LocationModel(
-        id: '4',
-        name: 'Local Wing House',
-        address: '321 Elm St, City, State 12345',
-        phone: '(555) 321-9876',
-        website: 'https://www.localwinghouse.com',
-        latitude: 40.7282,
-        longitude: -73.7949,
-        averageRating: 4.7,
-        totalReviews: 45,
-        createdBy: 'system',
-        createdAt: DateTime.now(),
-        tags: ['wings', 'beer', 'local'],
-      ),
+      ...SeedLocations.getSeedLocations(),
+      ...SeedLocations.getChainLocations(),
     ];
     notifyListeners();
   }
