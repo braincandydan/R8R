@@ -1,13 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/location_model.dart';
 
 class PlacesService {
-  static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
+  // Use our backend proxy to avoid CORS issues on web
+  static const String _baseUrl = '/api/places';
   
-  // TODO: Replace with your Google Places API key
-  // Get your API key from: https://console.cloud.google.com/
+  // For mobile apps, you can use direct API calls
+  static const String _directApiUrl = 'https://maps.googleapis.com/maps/api/place';
   static const String _apiKey = 'AIzaSyDXCtWihqMQe6E5jsjFxrhdtzX-COma5kk';
+  
+  // Detect if running on web
+  static bool get _isWeb => kIsWeb;
 
   /// Search for restaurants that serve chicken wings and beer near a location
   static Future<List<LocationModel>> searchWingRestaurants({
@@ -65,20 +70,40 @@ class PlacesService {
     required String type,
     String? keyword,
   }) async {
-    if (_apiKey == 'YOUR_GOOGLE_PLACES_API_KEY') {
-      throw Exception('Please set your Google Places API key in places_service.dart');
-    }
+    Uri url;
+    Map<String, String> queryParams;
 
-    final url = Uri.parse('$_baseUrl/nearbysearch/json');
-    final response = await http.get(
-      url.replace(queryParameters: {
+    if (_isWeb) {
+      // Use backend proxy for web to avoid CORS
+      url = Uri.parse(_baseUrl);
+      queryParams = {
+        'type': 'nearby',
+        'lat': latitude.toString(),
+        'lng': longitude.toString(),
+        'radius': radius.toString(),
+      };
+      if (keyword != null && keyword.isNotEmpty) {
+        queryParams['keyword'] = keyword;
+      }
+    } else {
+      // Direct API call for mobile apps
+      if (_apiKey == 'YOUR_GOOGLE_PLACES_API_KEY') {
+        throw Exception('Please set your Google Places API key in places_service.dart');
+      }
+      
+      url = Uri.parse('$_directApiUrl/nearbysearch/json');
+      queryParams = {
         'location': '$latitude,$longitude',
         'radius': radius.toString(),
         'type': type,
-        'keyword': keyword ?? '',
         'key': _apiKey,
-      }),
-    );
+      };
+      if (keyword != null && keyword.isNotEmpty) {
+        queryParams['keyword'] = keyword;
+      }
+    }
+
+    final response = await http.get(url.replace(queryParameters: queryParams));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -95,14 +120,28 @@ class PlacesService {
 
   /// Get detailed information about a specific place
   static Future<Map<String, dynamic>?> _getPlaceDetails(String placeId) async {
-    final url = Uri.parse('$_baseUrl/details/json');
-    final response = await http.get(
-      url.replace(queryParameters: {
+    Uri url;
+    Map<String, String> queryParams;
+
+    if (_isWeb) {
+      // Use backend proxy for web to avoid CORS
+      url = Uri.parse(_baseUrl);
+      queryParams = {
+        'type': 'details',
+        'placeId': placeId,
+        'fields': 'name,formatted_address,formatted_phone_number,website,geometry,rating,user_ratings_total,types,business_status,price_level',
+      };
+    } else {
+      // Direct API call for mobile apps
+      url = Uri.parse('$_directApiUrl/details/json');
+      queryParams = {
         'place_id': placeId,
         'fields': 'name,formatted_address,formatted_phone_number,website,geometry,rating,user_ratings_total,types,business_status,price_level',
         'key': _apiKey,
-      }),
-    );
+      };
+    }
+
+    final response = await http.get(url.replace(queryParameters: queryParams));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
