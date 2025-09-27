@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd r8r && bash build.sh",
+  "buildCommand": "bash r8r/build.sh",
   "outputDirectory": "r8r/build/web",
   "framework": null,
   "installCommand": "echo 'No install needed'",
