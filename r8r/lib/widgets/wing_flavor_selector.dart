@@ -58,7 +58,7 @@ class _WingFlavorSelectorState extends State<WingFlavorSelector> {
           children: [
             FaIcon(
               FontAwesomeIcons.drumstickBite,
-              color: Colors.orange[700],
+              color: const Color(0xFFC00000),
               size: 16,
             ),
             const SizedBox(width: 8),
@@ -72,13 +72,13 @@ class _WingFlavorSelectorState extends State<WingFlavorSelector> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: const Color(0xFFD00000).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${widget.selectedFlavors.length} selected',
                 style: TextStyle(
-                  color: Colors.orange[700],
+                  color: const Color(0xFFC00000),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -109,10 +109,10 @@ class _WingFlavorSelectorState extends State<WingFlavorSelector> {
                   newFlavors.remove(flavor);
                   widget.onFlavorsChanged(newFlavors);
                 },
-                backgroundColor: Colors.orange.withOpacity(0.1),
-                deleteIconColor: Colors.orange[700],
+                backgroundColor: const Color(0xFFD00000).withOpacity(0.1),
+                deleteIconColor: const Color(0xFFC00000),
                 labelStyle: TextStyle(
-                  color: Colors.orange[700],
+                  color: const Color(0xFFC00000),
                   fontWeight: FontWeight.w500,
                 ),
               );
@@ -154,11 +154,11 @@ class _WingFlavorSelectorState extends State<WingFlavorSelector> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? Colors.orange.withOpacity(0.2)
+                        ? const Color(0xFFD00000).withOpacity(0.2)
                         : Colors.grey[50],
                     border: Border.all(
                       color: isSelected 
-                          ? Colors.orange
+                          ? const Color(0xFFD00000)
                           : Colors.grey[300]!,
                       width: isSelected ? 2 : 1,
                     ),
@@ -169,7 +169,7 @@ class _WingFlavorSelectorState extends State<WingFlavorSelector> {
                       flavor,
                       style: TextStyle(
                         color: isSelected 
-                            ? Colors.orange[700]
+                            ? const Color(0xFFC00000)
                             : Colors.grey[700],
                         fontWeight: isSelected 
                             ? FontWeight.bold

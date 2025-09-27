@@ -42,12 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      final user = await authService.loginWithEmail(
+      final success = await authService.login(
         _emailController.text.trim(),
         _passwordController.text,
       );
 
-      if (user != null && mounted) {
+      if (success && mounted) {
         context.go('/home');
       }
     } catch (e) {
@@ -67,9 +67,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      final user = await authService.loginWithGoogle();
+      final success = await authService.signInWithGoogle();
 
-      if (user != null && mounted) {
+      if (success && mounted) {
         context.go('/home');
       }
     } catch (e) {

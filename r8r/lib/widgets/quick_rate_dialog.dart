@@ -90,7 +90,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
               icon: FontAwesomeIcons.drumstickBite,
               value: _wingRating,
               onChanged: (value) => setState(() => _wingRating = value),
-              color: Colors.orange,
+              color: const Color(0xFFD00000),
             ),
 
             const SizedBox(height: 16),
@@ -119,7 +119,7 @@ class _QuickRateDialogState extends State<QuickRateDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildSummaryItem('Wings', _wingRating, Colors.orange),
+                  _buildSummaryItem('Wings', _wingRating, const Color(0xFFD00000)),
                   Container(
                     height: 20,
                     width: 1,

@@ -91,7 +91,7 @@ class LocationDetailScreen extends StatelessWidget {
                                       children: [
                                         const FaIcon(
                                           FontAwesomeIcons.star,
-                                          color: Colors.orange,
+                                          color: const Color(0xFFD00000),
                                           size: 16,
                                         ),
                                         const SizedBox(width: 4),
@@ -329,13 +329,13 @@ class LocationDetailScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: const Color(0xFFD00000).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     review.overallRatingDisplay,
                     style: TextStyle(
-                      color: Colors.orange[800],
+                      color: const Color(0xFFB00000),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -364,7 +364,7 @@ class LocationDetailScreen extends StatelessWidget {
                           Text(
                             review.wingRatingDisplay,
                             style: TextStyle(
-                              color: Colors.orange[700],
+                              color: const Color(0xFFC00000),
                               fontWeight: FontWeight.w500,
                             ),
                           ),

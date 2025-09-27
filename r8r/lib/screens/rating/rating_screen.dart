@@ -183,9 +183,9 @@ class _RatingScreenState extends State<RatingScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.05),
+                          color: const Color(0xFFD00000).withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                          border: Border.all(color: const Color(0xFFD00000).withOpacity(0.2)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +194,7 @@ class _RatingScreenState extends State<RatingScreen> {
                               children: [
                                 FaIcon(
                                   FontAwesomeIcons.drumstickBite,
-                                  color: Colors.orange[700],
+                                  color: const Color(0xFFC00000),
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
@@ -202,7 +202,7 @@ class _RatingScreenState extends State<RatingScreen> {
                                   'Wing Ratings',
                                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.orange[800],
+                                    color: const Color(0xFFB00000),
                                   ),
                                 ),
                               ],
@@ -345,7 +345,7 @@ class _RatingScreenState extends State<RatingScreen> {
                                   icon: FontAwesomeIcons.drumstickBite,
                                   label: 'Wings',
                                   rating: (_wingCrispiness + _wingFlavor + _wingSize) / 3,
-                                  color: Colors.orange,
+                                  color: const Color(0xFFD00000),
                                 ),
                                 _buildOverallRatingItem(
                                   context,
@@ -374,9 +374,9 @@ class _RatingScreenState extends State<RatingScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.05),
+                          color: const Color(0xFFD00000).withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                          border: Border.all(color: const Color(0xFFD00000).withOpacity(0.2)),
                         ),
                         child: WingFlavorSelector(
                           selectedFlavors: _selectedWingFlavors,
@@ -471,7 +471,7 @@ class _RatingScreenState extends State<RatingScreen> {
     required ValueChanged<double> onChanged,
     required String category,
   }) {
-    final categoryColor = category == 'wing' ? Colors.orange : Colors.amber;
+    final categoryColor = category == 'wing' ? const Color(0xFFD00000) : Colors.amber;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),

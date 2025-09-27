@@ -13,6 +13,7 @@ import 'screens/rating/rate_selection_screen.dart';
 import 'screens/rating/rate_new_screen.dart';
 import 'screens/rewards/rewards_screen.dart';
 import 'screens/locations/add_location_screen.dart';
+import 'screens/admin/admin_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'services/auth_service.dart';
 import 'services/location_service.dart';
@@ -53,7 +54,7 @@ class R8RApp extends StatelessWidget {
                 elevation: 0,
                 surfaceTintColor: Colors.transparent,
               ),
-              cardTheme: const CardTheme(
+              cardTheme: const CardThemeData(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -147,10 +148,14 @@ class R8RApp extends StatelessWidget {
                 return RatingScreen(locationId: locationId);
               },
             ),
-            GoRoute(
-              path: '/add-location',
-              builder: (context, state) => const AddLocationScreen(),
-            ),
+                    GoRoute(
+                      path: '/add-location',
+                      builder: (context, state) => const AddLocationScreen(),
+                    ),
+                    GoRoute(
+                      path: '/admin',
+                      builder: (context, state) => const AdminScreen(),
+                    ),
             GoRoute(
               path: '/rate-new',
               builder: (context, state) => const RateNewScreen(),

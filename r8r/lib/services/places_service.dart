@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/location_model.dart';
 
+/// UserLocationService - Handles user-submitted locations via Firebase
+/// Google Places API is DISABLED to avoid costs - this service provides
+/// all location functionality through Firebase Firestore (free tier)
 class UserLocationService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;

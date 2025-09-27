@@ -96,7 +96,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
             children: [
               FaIcon(
                 FontAwesomeIcons.mapLocationDot,
-                color: const Color(0xFFFF6B35),
+                color: const Color(0xFFD00000),
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -120,12 +120,12 @@ class _RateNewScreenState extends State<RateNewScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: !_isCustomLocation 
-                          ? const Color(0xFFFF6B35).withOpacity(0.1)
+                          ? const Color(0xFFD00000).withOpacity(0.1)
                           : Colors.grey[100],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: !_isCustomLocation 
-                            ? const Color(0xFFFF6B35)
+                            ? const Color(0xFFD00000)
                             : Colors.grey[300]!,
                         width: 2,
                       ),
@@ -135,7 +135,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
                         FaIcon(
                           FontAwesomeIcons.magnifyingGlass,
                           color: !_isCustomLocation 
-                              ? const Color(0xFFFF6B35)
+                              ? const Color(0xFFD00000)
                               : Colors.grey[600],
                           size: 16,
                         ),
@@ -145,7 +145,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: !_isCustomLocation 
-                                ? const Color(0xFFFF6B35)
+                                ? const Color(0xFFD00000)
                                 : Colors.grey[600],
                           ),
                         ),
@@ -162,12 +162,12 @@ class _RateNewScreenState extends State<RateNewScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: _isCustomLocation 
-                          ? const Color(0xFFFF6B35).withOpacity(0.1)
+                          ? const Color(0xFFD00000).withOpacity(0.1)
                           : Colors.grey[100],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _isCustomLocation 
-                            ? const Color(0xFFFF6B35)
+                            ? const Color(0xFFD00000)
                             : Colors.grey[300]!,
                         width: 2,
                       ),
@@ -177,7 +177,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
                         FaIcon(
                           FontAwesomeIcons.plus,
                           color: _isCustomLocation 
-                              ? const Color(0xFFFF6B35)
+                              ? const Color(0xFFD00000)
                               : Colors.grey[600],
                           size: 16,
                         ),
@@ -187,7 +187,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: _isCustomLocation 
-                                ? const Color(0xFFFF6B35)
+                                ? const Color(0xFFD00000)
                                 : Colors.grey[600],
                           ),
                         ),
@@ -290,7 +290,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
             children: [
               FaIcon(
                 FontAwesomeIcons.drumstickBite,
-                color: Colors.orange[700],
+                color: const Color(0xFFC00000),
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -306,7 +306,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
                 icon: const FaIcon(FontAwesomeIcons.plus, size: 12),
                 label: const Text('Add Wings'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: const Color(0xFFD00000),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -367,9 +367,9 @@ class _RateNewScreenState extends State<RateNewScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.05),
+        color: const Color(0xFFD00000).withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withOpacity(0.2)),
+        border: Border.all(color: const Color(0xFFD00000).withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,7 +424,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
             min: -10,
             max: 10,
             divisions: 20,
-            activeColor: Colors.orange,
+            activeColor: const Color(0xFFD00000),
             onChanged: (value) {
               setState(() {
                 wingRating.rating = value;
@@ -734,7 +734,7 @@ class _RateNewScreenState extends State<RateNewScreen> {
       child: ElevatedButton(
         onPressed: _isSubmitting ? null : _submitRating,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF6B35),
+          backgroundColor: const Color(0xFFD00000),
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

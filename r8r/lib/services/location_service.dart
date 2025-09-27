@@ -8,7 +8,7 @@ class LocationService extends ChangeNotifier {
   List<LocationModel> _locations = [];
   Position? _currentPosition;
   bool _isLoading = false;
-  bool _useRealData = true; // Toggle between real and mock data
+  bool _useRealData = false; // Disabled to avoid API costs - use mock data and user-submitted locations
 
   List<LocationModel> get locations => _locations;
   Position? get currentPosition => _currentPosition;
@@ -20,8 +20,9 @@ class LocationService extends ChangeNotifier {
   }
 
   void _initializeData() {
-    // Load mock data initially, will be replaced by real data when location is available
+    // Load mock data initially, then Firebase data will replace/supplement it
     _loadMockData();
+    _loadFirebaseLocations();
   }
 
   void _loadMockData() {
@@ -31,6 +32,50 @@ class LocationService extends ChangeNotifier {
       ...SeedLocations.getChainLocations(),
     ];
     notifyListeners();
+  }
+
+  /// Load all locations from Firebase (seed + user-submitted, no API costs)
+  Future<void> _loadFirebaseLocations() async {
+    try {
+      debugPrint('Loading all locations from Firebase...');
+      
+      final firebaseLocations = await UserLocationService.getAllLocations();
+      
+      if (firebaseLocations.isNotEmpty) {
+        // Use Firebase as primary source, fallback to mock data if empty
+        _locations = firebaseLocations;
+        debugPrint('Loaded ${firebaseLocations.length} locations from Firebase');
+      } else {
+        // No Firebase data, use mock data
+        debugPrint('No Firebase locations found, using mock data');
+        _locations = [
+          ...SeedLocations.getSeedLocations(),
+          ...SeedLocations.getChainLocations(),
+        ];
+      }
+      
+      debugPrint('Total locations available: ${_locations.length}');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading Firebase locations: $e');
+      // Keep existing mock data if loading fails
+    }
+  }
+
+  /// Remove duplicate locations based on name similarity
+  List<LocationModel> _removeDuplicateLocations(List<LocationModel> locations) {
+    final uniqueLocations = <LocationModel>[];
+    final seenNames = <String>{};
+    
+    for (final location in locations) {
+      final normalizedName = location.name.toLowerCase().trim();
+      if (!seenNames.contains(normalizedName)) {
+        seenNames.add(normalizedName);
+        uniqueLocations.add(location);
+      }
+    }
+    
+    return uniqueLocations;
   }
 
   Future<void> getCurrentLocation() async {
@@ -73,13 +118,11 @@ class LocationService extends ChangeNotifier {
 
       debugPrint('Current location: ${_currentPosition!.latitude}, ${_currentPosition!.longitude}');
 
-      // Load real restaurant data if enabled
-      if (_useRealData) {
-        await loadRealRestaurants();
-      } else {
-        // Sort mock locations by distance
-        _sortLocationsByDistance();
-      }
+      // Load all locations from Firebase (seed + user-submitted)
+      await _loadFirebaseLocations();
+      
+      // Sort all locations by distance
+      _sortLocationsByDistance();
     } catch (e) {
       debugPrint('Error getting location: $e');
     } finally {
@@ -178,31 +221,34 @@ class LocationService extends ChangeNotifier {
     }
   }
 
-  /// Toggle between real and mock data
+  /// Toggle between user-submitted and mock-only data (Google Places API disabled)
   void toggleDataSource() {
     _useRealData = !_useRealData;
-    debugPrint('Data source toggled to: ${_useRealData ? "Real" : "Mock"}');
+    debugPrint('Data source toggled to: ${_useRealData ? "User-submitted + Mock" : "Mock Only"}');
     
-    if (_useRealData && _currentPosition != null) {
-      loadRealRestaurants();
+    if (_useRealData) {
+      _loadFirebaseLocations();
     } else {
       _loadMockData();
-      _sortLocationsByDistance();
+      if (_currentPosition != null) {
+        _sortLocationsByDistance();
+      }
     }
   }
 
-  /// Refresh restaurant data
+  /// Refresh restaurant data from Firebase (seed + user-submitted, no API costs)
   Future<void> refreshRestaurants() async {
-    if (_useRealData && _currentPosition != null) {
-      _isLoading = true;
-      notifyListeners();
-      
-      try {
-        await loadRealRestaurants();
-      } finally {
-        _isLoading = false;
-        notifyListeners();
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      await _loadFirebaseLocations();
+      if (_currentPosition != null) {
+        _sortLocationsByDistance();
       }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

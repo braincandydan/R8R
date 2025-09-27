@@ -182,7 +182,7 @@ class _PhotoCaptureWidgetState extends State<PhotoCaptureWidget> {
     // In a real app, this would open the camera or gallery
     if (widget.imagePaths.length < widget.maxImages) {
       final newImages = List<String>.from(widget.imagePaths);
-      newImages.add('https://via.placeholder.com/150x150/FF6B35/FFFFFF?text=Wing+Photo+${widget.imagePaths.length + 1}');
+      newImages.add('https://via.placeholder.com/150x150/D00000/FFFFFF?text=Wing+Photo+${widget.imagePaths.length + 1}');
       widget.onImagesChanged(newImages);
     }
   }

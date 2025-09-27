@@ -41,14 +41,14 @@ class _RateSelectionScreenState extends State<RateSelectionScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFFFF6B35),
-                        const Color(0xFFFF8A50),
+                        const Color(0xFFD00000),
+                        const Color(0xFFFF4444),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        color: const Color(0xFFD00000).withOpacity(0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -104,7 +104,7 @@ class _RateSelectionScreenState extends State<RateSelectionScreen> {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B35),
+                      backgroundColor: const Color(0xFFD00000),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -217,12 +217,12 @@ class _RateSelectionScreenState extends State<RateSelectionScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                    color: const Color(0xFFD00000).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: FaIcon(
                     FontAwesomeIcons.drumstickBite,
-                    color: const Color(0xFFFF6B35),
+                    color: const Color(0xFFD00000),
                     size: 16,
                   ),
                 ),

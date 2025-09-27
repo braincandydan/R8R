@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import '../../services/auth_service.dart';
 import '../../services/rating_service.dart';
 
@@ -11,7 +12,36 @@ class RewardsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rewards & Achievements'),
+        title: GestureDetector(
+          onLongPress: () {
+            // Hidden admin access - long press on title
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Admin Access'),
+                content: const Text('Access admin panel?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.go('/admin');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD00000),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Admin Panel'),
+                  ),
+                ],
+              ),
+            );
+          },
+          child: const Text('Rewards & Achievements'),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         centerTitle: true,

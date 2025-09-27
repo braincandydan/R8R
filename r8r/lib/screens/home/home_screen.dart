@@ -51,14 +51,14 @@ class HomeScreen extends StatelessWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            const Color(0xFFFF6B35),
-                            const Color(0xFFFF8A50),
+                            const Color(0xFFD00000),
+                            const Color(0xFFFF4444),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF6B35).withOpacity(0.3),
+                            color: const Color(0xFFD00000).withOpacity(0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -148,7 +148,7 @@ class HomeScreen extends StatelessWidget {
                             title: 'Rate & Review',
                             subtitle: 'Share your experience',
                             onTap: () => context.go('/locations'),
-                            color: Colors.orange,
+                            color: const Color(0xFFD00000),
                           ),
                         ),
                       ],
@@ -287,12 +287,12 @@ class HomeScreen extends StatelessWidget {
                                                 Container(
                                                   padding: const EdgeInsets.all(8),
                                                   decoration: BoxDecoration(
-                                                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                                    color: const Color(0xFFD00000).withOpacity(0.1),
                                                     borderRadius: BorderRadius.circular(8),
                                                   ),
                                                   child: FaIcon(
                                                     FontAwesomeIcons.drumstickBite,
-                                                    color: const Color(0xFFFF6B35),
+                                                    color: const Color(0xFFD00000),
                                                     size: 16,
                                                   ),
                                                 ),
@@ -340,13 +340,13 @@ class HomeScreen extends StatelessWidget {
                                                 Container(
                                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                   decoration: BoxDecoration(
-                                                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                                    color: const Color(0xFFD00000).withOpacity(0.1),
                                                     borderRadius: BorderRadius.circular(12),
                                                   ),
                                                   child: Text(
                                                     'Rate',
                                                     style: TextStyle(
-                                                      color: const Color(0xFFFF6B35),
+                                                      color: const Color(0xFFD00000),
                                                       fontSize: 10,
                                                       fontWeight: FontWeight.bold,
                                                     ),
@@ -545,13 +545,13 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: const Color(0xFFD00000).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     review.overallRatingDisplay,
                     style: TextStyle(
-                      color: Colors.orange[800],
+                      color: const Color(0xFFB00000),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -572,7 +572,7 @@ class HomeScreen extends StatelessWidget {
                 Text(
                   review.wingRatingDisplay,
                   style: TextStyle(
-                    color: Colors.orange[700],
+                    color: const Color(0xFFC00000),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
