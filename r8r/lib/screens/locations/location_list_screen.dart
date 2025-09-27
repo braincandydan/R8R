@@ -66,10 +66,41 @@ class _LocationListScreenState extends State<LocationListScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              final locationService = Provider.of<LocationService>(context, listen: false);
+              locationService.refreshRestaurants();
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.my_location),
             onPressed: () {
               Provider.of<LocationService>(context, listen: false).getCurrentLocation();
             },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              final locationService = Provider.of<LocationService>(context, listen: false);
+              if (value == 'toggle_data') {
+                locationService.toggleDataSource();
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'toggle_data',
+                child: Consumer<LocationService>(
+                  builder: (context, locationService, _) {
+                    return Row(
+                      children: [
+                        Icon(locationService.useRealData ? Icons.location_off : Icons.location_on),
+                        const SizedBox(width: 8),
+                        Text(locationService.useRealData ? 'Use Mock Data' : 'Use Real Data'),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

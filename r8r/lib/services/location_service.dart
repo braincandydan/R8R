@@ -1,22 +1,30 @@
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/location_model.dart';
+import 'places_service.dart';
 
 class LocationService extends ChangeNotifier {
   List<LocationModel> _locations = [];
   Position? _currentPosition;
   bool _isLoading = false;
+  bool _useRealData = true; // Toggle between real and mock data
 
   List<LocationModel> get locations => _locations;
   Position? get currentPosition => _currentPosition;
   bool get isLoading => _isLoading;
+  bool get useRealData => _useRealData;
 
   LocationService() {
     _initializeData();
   }
 
   void _initializeData() {
-    // Mock data for MVP - in production, this would come from your backend
+    // Load mock data initially, will be replaced by real data when location is available
+    _loadMockData();
+  }
+
+  void _loadMockData() {
+    // Mock data for MVP - fallback when real data fails
     _locations = [
       LocationModel(
         id: '1',
@@ -74,6 +82,7 @@ class LocationService extends ChangeNotifier {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
+        debugPrint('Location services are not enabled');
         _isLoading = false;
         notifyListeners();
         return;
@@ -84,6 +93,7 @@ class LocationService extends ChangeNotifier {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
+          debugPrint('Location permissions are denied');
           _isLoading = false;
           notifyListeners();
           return;
@@ -91,6 +101,7 @@ class LocationService extends ChangeNotifier {
       }
 
       if (permission == LocationPermission.deniedForever) {
+        debugPrint('Location permissions are permanently denied');
         _isLoading = false;
         notifyListeners();
         return;
@@ -101,8 +112,15 @@ class LocationService extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // Sort locations by distance
-      _sortLocationsByDistance();
+      debugPrint('Current location: ${_currentPosition!.latitude}, ${_currentPosition!.longitude}');
+
+      // Load real restaurant data if enabled
+      if (_useRealData) {
+        await loadRealRestaurants();
+      } else {
+        // Sort mock locations by distance
+        _sortLocationsByDistance();
+      }
     } catch (e) {
       debugPrint('Error getting location: $e');
     } finally {
@@ -158,5 +176,83 @@ class LocationService extends ChangeNotifier {
       location.name.toLowerCase().contains(query.toLowerCase()) ||
       location.address.toLowerCase().contains(query.toLowerCase())
     ).toList();
+  }
+
+  /// Load real restaurants from Google Places API
+  Future<void> loadRealRestaurants() async {
+    if (_currentPosition == null) {
+      debugPrint('No current position available for loading real restaurants');
+      return;
+    }
+
+    try {
+      debugPrint('Loading real restaurants from Google Places API...');
+      
+      // Search for wing restaurants
+      final realRestaurants = await PlacesService.searchWingRestaurants(
+        latitude: _currentPosition!.latitude,
+        longitude: _currentPosition!.longitude,
+      );
+
+      // Also search for popular wing chains
+      final chainRestaurants = await PlacesService.searchWingChains(
+        latitude: _currentPosition!.latitude,
+        longitude: _currentPosition!.longitude,
+      );
+
+      // Combine and deduplicate results
+      final allRestaurants = <String, LocationModel>{};
+      
+      // Add chain restaurants first (usually more reliable)
+      for (final restaurant in chainRestaurants) {
+        allRestaurants[restaurant.id] = restaurant;
+      }
+      
+      // Add other wing restaurants
+      for (final restaurant in realRestaurants) {
+        allRestaurants[restaurant.id] = restaurant;
+      }
+
+      if (allRestaurants.isNotEmpty) {
+        _locations = allRestaurants.values.toList();
+        _sortLocationsByDistance();
+        debugPrint('Loaded ${_locations.length} real restaurants');
+      } else {
+        debugPrint('No real restaurants found, keeping mock data');
+        _sortLocationsByDistance();
+      }
+    } catch (e) {
+      debugPrint('Error loading real restaurants: $e');
+      // Keep existing locations (mock data) if API fails
+      _sortLocationsByDistance();
+    }
+  }
+
+  /// Toggle between real and mock data
+  void toggleDataSource() {
+    _useRealData = !_useRealData;
+    debugPrint('Data source toggled to: ${_useRealData ? "Real" : "Mock"}');
+    
+    if (_useRealData && _currentPosition != null) {
+      loadRealRestaurants();
+    } else {
+      _loadMockData();
+      _sortLocationsByDistance();
+    }
+  }
+
+  /// Refresh restaurant data
+  Future<void> refreshRestaurants() async {
+    if (_useRealData && _currentPosition != null) {
+      _isLoading = true;
+      notifyListeners();
+      
+      try {
+        await loadRealRestaurants();
+      } finally {
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
   }
 }
