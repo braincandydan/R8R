@@ -6,7 +6,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    // For web, you need to get the OAuth 2.0 client ID from Firebase Console > Authentication > Sign-in method > Google
+    clientId: kIsWeb ? '943531801651-YOUR_WEB_CLIENT_ID.apps.googleusercontent.com' : null,
+  );
   
   bool _isAuthenticated = false;
   String? _currentUserId;
