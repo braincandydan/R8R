@@ -1,6 +1,6 @@
 {
-  "buildCommand": "bash build.sh",
-  "outputDirectory": "build/web",
+  "buildCommand": "cd R8R/r8r && bash build.sh",
+  "outputDirectory": "R8R/r8r/build/web",
   "framework": null,
   "installCommand": "echo 'No install needed'",
   "rewrites": [
