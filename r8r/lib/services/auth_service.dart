@@ -8,7 +8,7 @@ class AuthService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // For web, you need to get the OAuth 2.0 client ID from Firebase Console > Authentication > Sign-in method > Google
-    clientId: kIsWeb ? '943531801651-YOUR_WEB_CLIENT_ID.apps.googleusercontent.com' : null,
+    clientId: kIsWeb ? '943531801651-ar2rdfbgbulg9lqntdig6km9rhqbvj4v.apps.googleusercontent.com' : null,
   );
   
   bool _isAuthenticated = false;
